@@ -1,0 +1,26 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "ubuntu/trusty64"
+
+  # Increase memory and CPUs
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 2048
+    v.cpus = 2
+  end
+
+  # Box provisioning
+  config.vm.provision "shell", inline: "sudo locale-gen it_IT.UTF-8",
+    run: "always"
+
+  config.vm.provision "shell", inline: "sudo apt-get update"
+  config.vm.provision "shell",
+    inline: "sudo DEBIAN_FRONTEND=noninteractive "\
+            "apt-get --assume-yes upgrade"
+
+  config.vm.provision "shell", path: "scripts/make_swap.sh"
+  config.vm.provision "shell", path: "scripts/build.sh"
+end
